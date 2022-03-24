@@ -1,0 +1,10 @@
+UK_ROOT ?= $(PWD)/../../unikraft.git
+UK_LIBS ?= $(PWD)/../../libs
+DEPS := $(UK_LIBS)/pthread-embedded:$(UK_LIBS)/newlib:$(UK_LIBS)/lwip
+LIBS := $(DEPS)
+
+all:
+	@+$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS)
+
+$(MAKECMDGOALS):
+	@+$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS) $(MAKECMDGOALS)

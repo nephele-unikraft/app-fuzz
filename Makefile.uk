@@ -1,0 +1,10 @@
+$(eval $(call addlib,libfuzzapp))
+
+LIBFUZZAPP_CINCLUDES-y += $(LIBXENPLAT_CINCLUDES-y)
+LIBFUZZAPP_CINCLUDES-y += -I$(APP_BASE)
+LIBFUZZAPP_CINCLUDES-y += -I$(APP_BASE)/src
+
+LIBFUZZAPP_SRCS-y += $(APP_BASE)/src/main.c
+LIBFUZZAPP_SRCS-y += $(APP_BASE)/src/syscall_fuzzing.c
+LIBFUZZAPP_SRCS-y += $(APP_BASE)/src/os/unikraft/unikraft.c
+LIBFUZZAPP_SRCS-y += $(APP_BASE)/src/os/unikraft/syscall.c

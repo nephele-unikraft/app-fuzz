@@ -1,0 +1,19 @@
+CC?=afl-gcc
+CFLAGS=-Werror -Wall -Wextra -std=gnu99 -Isrc/
+APP=fuzz-app
+
+LIBFUZZAPP_SRCS-y += src/os/linux/linux.c
+LIBFUZZAPP_SRCS-y += src/os/linux/syscall.c
+LIBFUZZAPP_SRCS-y += src/main.c
+LIBFUZZAPP_SRCS-y += src/syscall_fuzzing.c
+
+LIBFUZZAPP-OBJS = $(patsubst %.c,%.o,$(LIBFUZZAPP_SRCS-y))
+
+$(APP): $(LIBFUZZAPP-OBJS)
+	$(CC) -pie -o $@ $(CFLAGS) $(LDFLAGS) $^
+
+%.o: %.c
+	$(CC) -c -o $@ $(CFLAGS) $<
+
+clean:
+	@-rm -rf $(LIBFUZZAPP-OBJS) $(APP)
