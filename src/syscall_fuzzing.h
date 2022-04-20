@@ -19,6 +19,7 @@ typedef struct {
 extern call_t gCall;
 extern int do_write_ready;
 extern int do_trace_syscalls;
+extern int do_baseline;
 
 int  syscall_fuzzing_init(void *init_content);
 long syscall_fuzzing_exec(void);

@@ -1,9 +1,12 @@
 #include <stdlib.h>
 #include <getopt.h>
+#include <unistd.h>
 #include "os.h"
 #include "syscall_fuzzing.h"
 #include "utils.h"
 
+
+static int do_close_stdin;
 
 static void print_usage(char *cmd)
 {
@@ -13,16 +16,20 @@ static void print_usage(char *cmd)
     fprintf(stderr, "-h, --help                    Display this help and exit\n");
     fprintf(stderr, "-r, --write-ready             Write ready in Xenstore\n");
     fprintf(stderr, "-t, --trace-syscalls          Trace syscalls\n");
+    fprintf(stderr, "-b, --baseline                Run baseline (fuzz a single no-crash syscall)\n");
+    fprintf(stderr, "-c, --close-stdin             Close stdin\n");
 }
 
 static int parse_args(int argc, char **argv)
 {
     int opt, opt_index, rc = 0;
-    const char *short_opts = "hrt";
+    const char *short_opts = "hrtbc";
     const struct option long_opts[] = {
         { "help"               , no_argument       , NULL , 'h' },
         { "write-ready   "     , no_argument       , NULL , 'r' },
         { "trace-syscalls"     , no_argument       , NULL , 't' },
+        { "baseline"           , no_argument       , NULL , 'b' },
+        { "close-stdin"        , no_argument       , NULL , 'c' },
         { NULL , 0 , NULL , 0 }
     };
 
@@ -43,6 +50,14 @@ static int parse_args(int argc, char **argv)
 
         case 't':
             do_trace_syscalls = 1;
+            break;
+
+        case 'b':
+            do_baseline = 1;
+            break;
+
+        case 'c':
+            do_close_stdin = 1;
             break;
 
         default:
@@ -75,6 +90,9 @@ int main(int argc, char* argv[])
 		ERROR("Error calling os_parse_args() rc=%d\n", rc);
 		goto out;
 	}
+
+	if (do_close_stdin)
+		close(STDIN_FILENO);
 
 	rc = os_fuzz_init();
 	if (rc) {

@@ -18,6 +18,7 @@ call_t gCall;
 
 int do_write_ready;
 int do_trace_syscalls;
+int do_baseline;
 
 #define __SYSCALL_TRACE(params_num, id, pCall) \
 do { \
@@ -114,12 +115,22 @@ static long exec_syscall_6(uint32_t id, call_t *pCall)
 	return rc;
 }
 
+static uint32_t convert_syscall_id(uint32_t syscall_id)
+{
+	return fuzzed_syscall_ids[(syscall_id % os_syscall_num()) % ARRAY_SIZE(fuzzed_syscall_ids)];
+}
+
 static long exec_syscall(call_t *pCall)
 {
-	uint32_t id = fuzzed_syscall_ids[(pCall->id % os_syscall_num()) % ARRAY_SIZE(fuzzed_syscall_ids)];//TODO function
+	uint32_t id;
 	long rc;
 
-	switch(os_syscall_params_num[id]) {
+	if (do_baseline)
+		id = SYS_getppid;
+	else
+		id = convert_syscall_id(pCall->id);
+
+	switch (os_syscall_params_num[id]) {
 	case 0:
 		rc = exec_syscall_0(id, pCall);
 		break;
