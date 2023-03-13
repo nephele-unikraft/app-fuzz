@@ -1,4 +1,4 @@
-UK_ROOT ?= $(PWD)/../../unikraft.git
+UK_ROOT ?= $(PWD)/../../unikraft
 UK_LIBS ?= $(PWD)/../../libs
 DEPS := $(UK_LIBS)/pthread-embedded:$(UK_LIBS)/newlib:$(UK_LIBS)/lwip
 LIBS := $(DEPS)
